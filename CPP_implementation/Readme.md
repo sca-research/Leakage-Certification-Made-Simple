@@ -25,6 +25,7 @@ This will generate a .csv trace file using sigma value as 3. It will compute the
 - If you already have a .csv file then you can use it computed MI (for different sample sample size) using
 
 `./a.out -f [infilename].csv -o [outfilename].csv`
+
 We already provided two input datasets for the trial run: `tr_hw_1.5.csv` and `tr_hw_4G.csv`. If no output filename is given then outputs are currently printed on terminal.
 
 - Note that the .csv trace file generated will contain secret key and sigma values on the last line. This value is used to compute the exact MI using numerical integration method from GSL. If your file do not have the sigma value or you do not wish to compute the exact MI then use an additional option `-ns 1`
