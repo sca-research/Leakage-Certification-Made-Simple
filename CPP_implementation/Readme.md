@@ -13,7 +13,6 @@ Detailed documentation about the download and installation of dependencies are p
 
 
 - On ubuntu
-
 `g++-8 -std=c++17 -O2 main.cpp simulate_trace.cpp mi_estimator.cpp [linking path] -larmadillo -lmlpack -lgsl -lstdc++fs -fopenmp`
 
 Use of linking path is optional depending on your system configuration
