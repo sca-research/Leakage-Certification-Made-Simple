@@ -3,6 +3,7 @@ This folder includes the CPP implementation of nearest neighbor-based MI estimat
 ### Dependencies
 - mlpack (and corresponding dependencies e.g. armadillo, boost)
 - gsl
+
 Detailed documentation about the download and installation of dependencies are provided in `https://github.com/mlpack/mlpack?tab=readme-ov-file#6-further-resources`
 
 ### Compile options
