@@ -200,9 +200,53 @@ def MI_mixt_gao_opt(q, t_n, pred_leakage, Tr, chunk_size):
 
 
 
-def MI_gao_multi(q, t_n, pred_leakage, Tr, chunk_size = 10000):
+
+def MI_gao_multi(q, t_n, pred_leakage, Tr):
+    '''Calculate GKOV MI between multivariate Tr and univariate pred_leakage'''
+
+    Tr_ = np.column_stack((Tr, pred_leakage))
+    tree1 = cKDTree(Tr_)
+    dist_ =  tree1.query(Tr_, k = t_n + 1, p = float('inf'), workers = -1)[0]
+    dist = dist_[:, t_n]
+    del dist_
+
+    # Distance vector adjustment-------------------------------
+    cond_dist = np.where(dist == 0, dist, dist - 2e-15)
+    tree2 = cKDTree(Tr)
+    result_m2 = tree2.query_ball_point(Tr, cond_dist + 1e-15,
+            p = float('inf'), workers = -1, return_length = True)
+    del Tr, tree2
+
+    # Reshaping pred_leakage for tree search------------------
+    if len(np.shape(pred_leakage)) == 1:
+        pred_leakage = np.array(pred_leakage).reshape((q, 1))
+    tree3 = cKDTree(pred_leakage)
+    result_n2 = tree3.query_ball_point(pred_leakage, cond_dist + 1e-15,
+            p = float('inf'), workers= -1, return_length = True)
+    del pred_leakage, tree3
+
+    ans = 0
+    for i in np.arange(0, q):
+        kp, m, n = t_n, result_m2[i], result_n2[i]
+        if dist[i] == 0:
+            kp = tree1.query_ball_point(Tr_[i], 1e-15, p = float('inf'), workers = -1, return_length = True)
+            pass
+        ans +=  (scipy.special.digamma(kp) - np.log(m+1) - np.log(n+1))/q
+        pass
+
+    ans = ans + np.log(q)
+    del dist, tree1, result_m2, result_n2
+    result = ans * np.log2(math.e)
+
+    return result 
+
+
+
+
+
+def MI_gao_multi_opt(q, t_n, pred_leakage, Tr, chunk_size = 50000):
     '''
-    GKOV MI estimator (Multivariate version)
+    GKOV MI estimator (Multivariate version) with lesser memory complexity  (recommended for q > 10^6)
 
     Parameters
     ----------
@@ -210,7 +254,7 @@ def MI_gao_multi(q, t_n, pred_leakage, Tr, chunk_size = 10000):
     t_n : Nearest neighbor value (e.g. t_n = int(np.log(n)))  
     pred_leakage : A list of uni(/multi)variate predicted leakage (e.g. intermediate outcome)
     Tr : Multidimensional Trace data (dimension >=2)
-    chunk_size : Size of a chunk of large traces (it must satisfy <= q)
+    chunk_size : Size of a chunk of large traces (it must satisfy <= q), we have considered a default value of 50000
     (Ref link: https://github.com/scipy/scipy/issues/15621#issuecomment-1057141414)
     Returns                                                                                                                                                                                                                                                                               
     -------
