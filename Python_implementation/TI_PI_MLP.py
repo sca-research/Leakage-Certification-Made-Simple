@@ -30,7 +30,7 @@ Reverse_AES_Sbox = [
     0x72, 0xf8, 0xf6, 0x64, 0x86, 0x68, 0x98, 0x16, 0xd4, 0xa4, 0x5c, 0xcc, 0x5d, 0x65, 0xb6, 0x92,
     0x6c, 0x70, 0x48, 0x50, 0xfd, 0xed, 0xb9, 0xda, 0x5e, 0x15, 0x46, 0x57, 0xa7, 0x8d, 0x9d, 0x84,
     0x90, 0xd8, 0xab, 0x00, 0x8c, 0xbc, 0xd3, 0x0a, 0xf7, 0xe4, 0x58, 0x05, 0xb8, 0xb3, 0x45, 0x06,
-    0xd0, 0x2c, 0x1e, 0x8f, 0xca, 0x3f, 0x0f, 0x02, 0xc1, 0xaf, 0xbd, 0x03, 0x01, 0x13, 0x8a, 0x6b,                                                                                                                                                                                       
+    0xd0, 0x2c, 0x1e, 0x8f, 0xca, 0x3f, 0x0f, 0x02, 0xc1, 0xaf, 0xbd, 0x03, 0x01, 0x13, 0x8a,0x6b,                                                                                                                                                          
     0x3a, 0x91, 0x11, 0x41, 0x4f, 0x67, 0xdc, 0xea, 0x97, 0xf2, 0xcf, 0xce, 0xf0, 0xb4, 0xe6, 0x73,
     0x96, 0xac, 0x74, 0x22, 0xe7, 0xad, 0x35, 0x85, 0xe2, 0xf9, 0x37, 0xe8, 0x1c, 0x75, 0xdf, 0x6e,
     0x47, 0xf1, 0x1a, 0x71, 0x1d, 0x29, 0xc5, 0x89, 0x6f, 0xb7, 0x62, 0x0e, 0xaa, 0x18, 0xbe, 0x1b,
@@ -50,12 +50,12 @@ def mlp_task(input_size, classes = 256, name = '', summary = True):
     input_dict['input_x'] = input_x
 
     norm_in = BatchNormalization(axis = 1)(input_x)
-    x = Dense(  32, activation = 'selu')(norm_in)
+    x = Dense(  64, activation = 'selu')(norm_in)
+    x = BatchNormalization()(x)
+    x = Dense(  32, activation = 'selu')(x)
     x = BatchNormalization()(x)
     x = Dense(  16, activation = 'selu')(x)
     x = BatchNormalization()(x)
-    # x = Dense(  16, activation = 'selu')(x)
-    # x = BatchNormalization()(x)
     
 
 
@@ -90,8 +90,8 @@ def get_hot_encode(label_set, classes = 256):
     return np.eye(classes)[label_set]
 
 def train_mlp(X_train,Y_train, N_prof, N_points = 10):
-    epochs = 5
-    batch_size = 400
+    epochs = 15
+    batch_size = 300
    
     
     training_split = int(N_prof*0.9)
@@ -104,13 +104,13 @@ def train_mlp(X_train,Y_train, N_prof, N_points = 10):
     X_prof = X_train[:training_split]
     X_valid = X_train[training_split:training_split + validation_split]
     
-    scaler = preprocessing.StandardScaler()
-    X_prof = scaler.fit_transform(X_prof)
-    X_valid = scaler.transform(X_valid)
+    # scaler = preprocessing.StandardScaler()
+    # X_prof = scaler.fit_transform(X_prof)
+    # X_valid = scaler.transform(X_valid)
 
-    scaler = preprocessing.MinMaxScaler(feature_range=(0,1))
-    X_prof = scaler.fit_transform(X_prof)
-    X_valid = scaler.transform(X_valid)
+    # scaler = preprocessing.MinMaxScaler(feature_range=(0,1))
+    # X_prof = scaler.fit_transform(X_prof)
+    # X_valid = scaler.transform(X_valid)
     X_valid = X_valid.reshape((X_valid.shape[0], X_valid.shape[1], 1))
 
 
@@ -176,28 +176,29 @@ def run_lr(N_prof, N_val, trace_prof, label_prof, trace_val, label_val):
     model = load_model_(X_train.shape[1], N_prof)
     
     # # Predicts the scores
-    scores_lr = 0
-    scores_lr_prof = 0
+   
     
     predictions_val = model.predict(X_val, verbose = 0)['x']
     predictions = model.predict(X_train, verbose = 0)['x']
     
     pred_v_tmp  = np.where(predictions_val > 1.0e-10, predictions_val, 1.0e-10)
-    result_val = np.where(predictions_val > 1.0e-10, np.log2(pred_v_tmp), -2)
+    # result_val = np.where(predictions_val > 1.0e-10, np.log(pred_v_tmp), -2)
     
     pred_tmp  = np.where(predictions > 1.0e-10, predictions, 1.0e-10)
-    result_ = np.where(predictions > 1.0e-10, np.log2(pred_tmp), -2)
+    # result_ = np.where(predictions > 1.0e-10, np.log2(pred_tmp), -2)
+    scores_lr = 0
+    scores_lr_prof = 0
     
     for i in range(256):
         idx_train = np.where(Y_train == i)
         idx_val = np.where(Y_val == i)
      
         if len(idx_val) > 0: 
-            x_score =  result_val[idx_val, i]
+            x_score =  np.log(pred_v_tmp[ idx_val, i])
             scores_lr += np.mean(x_score)
             pass
         if len(idx_train) > 0: 
-            x_prof_score = result_[idx_train, i]
+            x_prof_score = np.log(pred_tmp[ idx_train, i])
             scores_lr_prof += np.mean(x_prof_score)
             pass
         pass      
@@ -215,7 +216,7 @@ def compute_PI_TI(N_prof_range, N_val, trace_prof, label_prof, trace_val, label_
     for N_prof in N_prof_range:
         PI_lr = 0
         TI_lr = 0
-        n_exp = 100
+        n_exp = 10
         
         for _ in range(n_exp):
             score_lr, score_lr_prof = run_lr(N_prof, N_val, trace_prof, label_prof, trace_val, label_val)
@@ -259,11 +260,12 @@ if __name__ == "__main__":
     fontsize = 8
     fig_width = 5
     
-    N_prof_range = np.logspace(3.5, 5.5, 20).astype('int32')
+    # N_prof_range = np.logspace(3.5, 5.5, 20).astype('int32')
+    N_prof_range = [316227]
     n_repeats = 1
     PI_mean, TI_mean = [], []
     for _ in range(n_repeats):
-        PIs_lr, TIs_lr = compute_PI_TI(N_prof_range, int(1e04), T_prof[:, idx], Y_prof, T_valid[:, idx], Y_valid)
+        PIs_lr, TIs_lr = compute_PI_TI(N_prof_range, int(5e04), T_prof[:, idx], Y_prof, T_valid[:, idx], Y_valid)
         
         PI_mean.append(PIs_lr)
         TI_mean.append(TIs_lr)
@@ -274,7 +276,8 @@ if __name__ == "__main__":
     
     print(f" PI_values {PI_mean}")
     print(f" TI_values {TI_mean}") 
-    np.save('TI_PI_MLP.npy', [N_prof_range, PI_mean, TI_mean])    
+    # np.save('TI_PI_MLP.npy', [N_prof_range, PI_mean, TI_mean])    
+
 
 
 
