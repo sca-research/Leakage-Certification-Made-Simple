@@ -10,7 +10,8 @@ The project contains the `Python` and `C++` code for fast evaluation of differen
 ## Acknowldgement
 Our project is backed by the European Research Council (ERC) through the European Union’s Horizon 2020 research and innovation program (grant agreement No 725042), as well as by the Austrian Science Fund (FWF) 10.55776/F85 (SFB SpyCode).
 
- ![EU Logo](https://github.com/sca-research/Leakage-Certification-Made-Simple/blob/main/LOGO_ERC-FLAG_EU.jp)
+ ![EU Logo](https://github.com/sca-research/Leakage-Certification-Made-Simple/blob/main/LOGO_ERC-FLAG_EU.jpg)
+ 
  ![FWF Logo](https://github.com/sca-research/Leakage-Certification-Made-Simple/blob/main/FWF_Logo_Zusatz_Dunkelblau_RGB_EN.png)
  
  
