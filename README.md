@@ -1,8 +1,5 @@
 ## Leakage Certification Made Simple
-- Authors:    Aakash Chowdhury, Arnab Roy, Carlo Brunetta and Elisabeth Oswald
-  Cybersecurity Research Group, University of Klagenfurt, Austria
-- Contact Information:    aakash.chowdhury@aau.at
-- eprint:     https://eprint.iacr.org/archive/2022/1201
+- The project is related to the mutual information-based side-channel leakage certification in simulated and public datasets. The Cybersecurity research group at the University of Klagenfurt, Austria conducted the research work on this project. For more details about the research, one can follow our archived version in [eprint](https://eprint.iacr.org/archive/2022/1201)
 
 ## General Introduction
 The project contains the `Python` and `C++` code for fast evaluation of different MI estimators, considered in Side-channel Leakage Certification.  
