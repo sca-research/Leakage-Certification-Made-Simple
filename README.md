@@ -2,7 +2,7 @@
 The project is focused on certifying side-channel leakage using mutual information in simulated and public datasets. This research was conducted by the Cybersecurity research group at the University of Klagenfurt, Austria. For further insights into this pioneering work, we invite you to explore our archived version [eprint](https://eprint.iacr.org/archive/2022/1201).
 
 ## General Introduction
-The project contains the `Python` and `C++` code for fast evaluation of different MI estimators, considered in Side-channel Leakage Certification. User guide and detailed instructions are provided in two separate folders in [Python](https://github.com/sca-research/Leakage-Certification-Made-Simple/tree/main/CPP_implementation) and [CPP](https://github.com/sca-research/Leakage-Certification-Made-Simple/tree/main/CPP_implementation)
+The project contains the `Python` and `C++` code for fast evaluation of different MI estimators, considered in Side-channel Leakage Certification. User guide and detailed instructions are provided in two separate folders in [Python](https://github.com/sca-research/Leakage-Certification-Made-Simple/tree/main/Python_implementation) and [CPP](https://github.com/sca-research/Leakage-Certification-Made-Simple/tree/main/CPP_implementation)
 
 ## Datasets
 
