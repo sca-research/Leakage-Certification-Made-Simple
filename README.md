@@ -4,7 +4,7 @@ The project is focused on certifying side-channel leakage using mutual informati
 ## General Introduction
 The project contains the `Python` and `C++` code for fast evaluation of different MI estimators, considered in side-channel leakage certification. User guide and detailed instructions are provided in two separate folders in [Python](https://github.com/sca-research/Leakage-Certification-Made-Simple/tree/main/Python_implementation) and [CPP](https://github.com/sca-research/Leakage-Certification-Made-Simple/tree/main/CPP_implementation)
 
-Based on our running time, we recommend using CPP code for univariate and bivariate experiments and Python code for higher dimensional experiments as it utilizes the `cKDTree` module from `scipy` for vectorized parallel tree search algorithm.    
+Based on our running time, we recommend using CPP code for univariate and bivariate experiments and Python code for higher dimensional (> 2) experiments as it utilizes the `cKDTree` module from `scipy` for vectorized parallel tree search algorithm.    
 
 ## Datasets
 We have considered both simulation and practical datasets.
