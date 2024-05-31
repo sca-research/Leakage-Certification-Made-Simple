@@ -13,7 +13,7 @@ We have considered both simulation and practical datasets.
 [LPC1313](https://zenodo.org/records/11396347), [AES_HD_ext](https://github.com/AISyLab/AES_HD_Ext)
 
 ## Acknowldgement
-Our project The project is supported in part by the European Research Council (ERC) under the European Union’s Horizon 2020 research and innovation program (grant agreement No 725042), and by the Austrian Science Fund (FWF) 10.55776/F85 (SFB SpyCode).
+This project is supported in part by the European Research Council (ERC) under the European Union’s Horizon 2020 research and innovation program (grant agreement No 725042), and by the Austrian Science Fund (FWF) 10.55776/F85 (SFB SpyCode).
 
  ![EU Logo](https://github.com/sca-research/Leakage-Certification-Made-Simple/blob/main/LOGO_ERC-FLAG_EU.jpg)
  
