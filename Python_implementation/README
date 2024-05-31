@@ -1,5 +1,4 @@
 
-
 REQUIREMENTS:
  This code is written in Python 3.11 and is mainly based on Numpy >= 1.23.5 and Scipy 1.12
  running on a Linux or Windows distribution. The required packages are:
@@ -15,15 +14,19 @@ USAGE:
  The code can be used to generate the simulations used in the paper "Leakage
  Certification Made Simple" published in Crypto 2024. The parameters can be changed in main.py and have the
  following usage:
-    
+
+
+
 
  Once the desired parameters are set, one can start the script with:
-    python3 main.py
+    python3 main_sim.py
 
 
 FILES DESCRIPTION
- testnbr_dist_1.py      - Generates leakage samples
+ Lkg_gen.py             - Generates Simulate Leakage Traces
  True_MI_comp.py        - Actual MI computation
  GKOV_MI.py             - Nearest Neighbor MI estimators
  Plugin_MI.py           - Plugin MI estimator
- main.py                - Main script setting the parameters
+ main_sim.py            - MI evaluation for simulated traces            
+ main.py                - TI, PI, and GKOV_MI computation for evaluating profiling complexity
+                          for AES_HD_ext dataset 
