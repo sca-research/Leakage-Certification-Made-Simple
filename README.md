@@ -4,8 +4,13 @@ The project is focused on certifying side-channel leakage using mutual informati
 ## General Introduction
 The project contains the `Python` and `C++` code for fast evaluation of different MI estimators, considered in Side-channel Leakage Certification. User guide and detailed instructions are provided in two separate folders in [Python](https://github.com/sca-research/Leakage-Certification-Made-Simple/tree/main/Python_implementation) and [CPP](https://github.com/sca-research/Leakage-Certification-Made-Simple/tree/main/CPP_implementation)
 
-## Datasets
+Based on our running time, we recommend using CPP code for univariate and bivariate experiments and Python code for higher dimensional experiments as it utilizes the `cKDTree` module from `scipy` for vectorized parallel tree search algorithm.    
 
+## Datasets
+We have considered both simulation and practical datasets.
+-  In simulation experiments, we have considered different linear leakage models, like, hamming weight, hamming distance, weighted hamming weight, and one non-linear model (by considering the double permutation). Along with leakage models we also consider the Gaussian and non-gaussian additive noises.
+- Two practical datasets are also used:
+[LPC1313](https://zenodo.org/records/11396347), [AES_HD_ext](https://github.com/AISyLab/AES_HD_Ext)
 
 ## Acknowldgement
 Our project The project is supported in part by the European Research Council (ERC) under the European Union’s Horizon 2020 research and innovation program (grant agreement No 725042), and by the Austrian Science Fund (FWF) 10.55776/F85 (SFB SpyCode).
