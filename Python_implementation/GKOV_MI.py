@@ -19,16 +19,16 @@ def ends_gap_chunk1(poss, t_n,  chunk_size):
         pass
     return np.concatenate(out)
 
-def ends_gap_chunk2(poss, dia_max,  chunk_size):
-    ''' Memory efficient radius query search for multivariate data'''
-    kdtree = cKDTree(poss)
-    chunk_count = poss.shape[0] // chunk_size
-    out = []
-    for chunk in np.array_split(poss, chunk_count):
-        out.append( kdtree.query_ball_point(chunk, dia_max, p =float('inf'),
-            workers= - 1, return_length= True))
-        pass
-    return np.concatenate(out, dtype=np.int32)
+# def ends_gap_chunk2(poss, dia_max,  chunk_size):
+#     ''' Memory efficient radius query search for multivariate data'''
+#     kdtree = cKDTree(poss)
+#     chunk_count = poss.shape[0] // chunk_size
+#     out = []
+#     for chunk in np.array_split(poss, chunk_count):
+#         out.append( kdtree.query_ball_point(chunk, dia_max, p =float('inf'),
+#             workers= - 1, return_length= True))
+#         pass
+#     return np.concatenate(out, dtype=np.int32)
 
 def ends_gap_chunk3(poss, dia_max,  chunk_size):
     ''' Memory efficient radius query search for univariate data'''
@@ -183,11 +183,13 @@ def MI_mixt_gao_opt(q, t_n, pred_leakage, Tr, chunk_size):
     result_n2 = ends_gap_chunk3(pred_leakage, cond_dist + 1e-15, chunk_size)
     del pred_leakage
     
+    treexy = cKDTree(Tr_)
     ans = 0
     for i in np.arange(0, q):
         kp, m, n = t_n, result_m2[i], result_n2[i]
         if dist[i] == 0:
-            kp = ends_gap_chunk2(Tr_[i], 1e-15, chunk_size)
+            kp = treexy.query_ball_point(Tr_[i], 1e-15, p = float('inf'),
+                                        workers = -1, return_length = True)
             pass
         ans += (scipy.special.digamma(kp) - np.log(m + 1) - np.log(n + 1)) / q
         pass
@@ -206,6 +208,7 @@ def MI_gao_multi(q, t_n, pred_leakage, Tr):
 
     Tr_ = np.column_stack((Tr, pred_leakage))
     tree1 = cKDTree(Tr_)
+    
     dist_ =  tree1.query(Tr_, k = t_n + 1, p = float('inf'), workers = -1)[0]
     dist = dist_[:, t_n]
     del dist_
@@ -229,14 +232,16 @@ def MI_gao_multi(q, t_n, pred_leakage, Tr):
     for i in np.arange(0, q):
         kp, m, n = t_n, result_m2[i], result_n2[i]
         if dist[i] == 0:
-            kp = tree1.query_ball_point(Tr_[i], 1e-15, p = float('inf'), workers = -1, return_length = True)
+            kp = tree1.query_ball_point(Tr_[i], 1e-15, p = float('inf'), 
+                                        workers = -1, return_length = True)
             pass
         ans +=  (scipy.special.digamma(kp) - np.log(m+1) - np.log(n+1))/q
+        # ans +=  (scipy.special.digamma(kp) - (scipy.special.digamma(m) + scipy.special.digamma(n)))/q
         pass
 
     ans = ans + np.log(q)
     del dist, tree1, result_m2, result_n2
-    result = ans * np.log2(math.e)
+    result = ans * np.log2(math.e) # adjustment for log base = 2 results
 
     return result 
 
@@ -276,12 +281,13 @@ def MI_gao_multi_opt(q, t_n, pred_leakage, Tr, chunk_size = 50000):
     result_n2 = ends_gap_chunk3(pred_leakage, cond_dist + 1e-15, chunk_size)
     del pred_leakage
     
+    treexy = cKDTree(Tr_)
     ans = 0
     for i in np.arange(0, q):
         kp, m, n = t_n, result_m2[i], result_n2[i]
         if dist[i] == 0:
-            kp = ends_gap_chunk2(Tr_[i], 1e-15, chunk_size)
-            
+            kp = treexy.query_ball_point(Tr_[i], 1e-15, p = float('inf'),
+                                        workers = -1, return_length = True)
         ans +=  (scipy.special.digamma(kp) - np.log(m+1) - np.log(n+1))/q
     ans = ans + np.log(q)
     del dist , result_m2, result_n2

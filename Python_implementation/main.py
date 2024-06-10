@@ -56,8 +56,8 @@ def run_lr(N_prof, N_val, trace_prof, label_prof, trace_val, label_val):
     y = label_prof[sample_idx]
     
     '''Running Different Training models'''
-    # clf = LogisticRegression(solver = 'newton-cholesky', n_jobs = -1)
-    clf = GaussianNB()
+    clf = LogisticRegression(solver = 'newton-cholesky', n_jobs = -1)
+    # clf = GaussianNB()
     # clf = LDA()
     clf.fit(X, y)
 
@@ -159,7 +159,7 @@ def compute_PI_TI(N_prof_range, N_val, trace_prof, label_prof, trace_val, label_
         print(f"Number of profile traces = {N_prof}")
         PI_lr = 0
         TI_lr = 0
-        n_exp = 20
+        n_exp = 25
         
         for _ in range(n_exp):
             score_lr, score_lr_prof = run_lr(N_prof, N_val, trace_prof, label_prof, trace_val, label_val)
@@ -191,15 +191,10 @@ def compute_GKOV_MI(N_prof_range, N_val, trace_prof, label_prof, trace_val, labe
     
     
 
-
-
-
-
 def main():
-
-              
-
-    # load data----------------------------
+             
+    print("load data----------------------------")
+    
     TS = np.load('aes_hd_ext.npz')
     
     Input = np.array( TS['data'][:, 16:32], dtype = np.uint8)
@@ -212,7 +207,7 @@ def main():
     Trace = np.array(TS['traces'], dtype = np.int16)
     
     n_trace = len(Trace)
-    X = np.array([ Reverse_AES_Sbox[Input_1[i] ^ key[0]]^Input_2[i]
+    X = np.array([ Reverse_AES_Sbox[Input_1[i] ^ key[0]] ^ Input_2[i]
                   for i in np.arange(0, n_trace)], dtype = np.uint16)
     
     idx = [539, 540, 542, 543, 965, 966, 967, 968, 969, 1021]
@@ -221,16 +216,21 @@ def main():
     T_valid = Trace[ int(4.5e05): ]
     Y_valid = X[ int(4.5e05):]
     
-
+    print("Estimating Multivariate Mutual Information------------")
+    
+    t_value = round(np.log(n_trace))
+    
+    MI_value = MI_gao_multi( n_trace, t_value, X, Trace[:, idx])
+    print(f"GKOV_MI corresponding to {len(idx)} leaky points = {MI_value}\n")
    
-    N_prof_range = np.logspace(3.5, 5.5, 10).astype('int32')
-    # N_prof_range = np.logspace(3.5, 5.5, 10).astype('int32')
-    # N_prof_range = [14677]
+    print("Model-based PI and TI calculation------------")
+    N_prof_range = np.logspace(3.5, 4.5, 10).astype('int32')
     n_repeats = 1
     PI_mean, TI_mean = [], []
     # GKOV_MI_mean = []
     for _ in range(n_repeats):
-        PIs_lr, TIs_lr = compute_PI_TI(N_prof_range, int(1e04), T_prof[:, idx], Y_prof, T_valid[:, idx], Y_valid)
+        PIs_lr, TIs_lr = compute_PI_TI(N_prof_range, int(1e04), T_prof[:, idx],
+                                       Y_prof, T_valid[:, idx], Y_valid)
         # gkov_mis = compute_GKOV_MI(N_prof_range, int(5e04), T_prof[:, idx], Y_prof, T_valid[:, idx], Y_valid)
         PI_mean.append(PIs_lr)
         TI_mean.append(TIs_lr)
@@ -251,25 +251,6 @@ if __name__ == "__main__":
 
 
 def main1():
-    TS = np.load('aes_hd_ext.npz')
-    
-    Input = np.array( TS['data'][:, 16:32], dtype = np.uint8)
-    
-    Input_1 = np.array(Input[:, 11], dtype = np.uint16)
-    Input_2 = np.array(Input[:, 7], dtype = np.uint16)
-    
-    key = np.array( TS['data'][:, 32:], dtype = np.uint8)[:, 11]
-    
-    Trace = np.array(TS['traces'], dtype = np.int16)
-    
-    n_trace = len(Trace)
-    X = np.array([ Reverse_AES_Sbox[Input_1[i] ^ key[0]]^Input_2[i]
-                  for i in np.arange(0, n_trace)], dtype = np.uint16)
-    
-    idx = [539, 540, 542, 543, 965, 966, 967, 968, 969, 1021]
-    
-    t_n = int(np.log(n_trace))
-    # MI_value = MI_gao_multi( n_trace, t_n, X, Trace[:, idx]) # 3.1807564712296204
     
     fig, ax = plt.subplots()
     TINY_SIZE = 10
@@ -285,8 +266,6 @@ def main1():
     plt.rc('figure', titlesize=MEDIUM_SIZE)  # fontsize of the figure title
     
 
-    
-    
     N_prof_range_logistic, PI_mean_logistic, TI_mean_logistic = np.load('TI_PI_logistic.npy')
     N_prof_range_GT, PI_mean_GT, TI_mean_GT = np.load('TI_PI_GT.npy')
     N_prof_range_MLP, PI_mean_MLP, TI_mean_MLP = np.load('AES_HD/TI_PI_MLP.npy')
