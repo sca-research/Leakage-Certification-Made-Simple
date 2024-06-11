@@ -1,3 +1,7 @@
+We have updated the python code of the Gao's paper implementation that has been provided in:
+"https://github.com/wgao9/mixed_KSG/blob/master/mixed.py"
+
+The link of the Gao's MI estimator paper: https://papers.nips.cc/paper_files/paper/2017/hash/ef72d53990bc4805684c9b61fa64a102-Abstract.html
 
 REQUIREMENTS:
  This code is written in Python 3.11 and is mainly based on Numpy >= 1.23.5 and Scipy 1.12
@@ -12,19 +16,20 @@ REQUIREMENTS:
 
 USAGE:
  The code can be used to generate the simulations used in the paper "Leakage
- Certification Made Simple" published in Crypto 2024. The parameters can be changed in main.py and have the
+ Certification Made Simple" published in Crypto 2024. The parameters can be changed in main_sim.py and have the
  following usage:
-
-
-
+ sig : the standard deviation of the noise
+ n_trial : Number of repitation need to consider for convergence plot
+ n_samples: Provide the range of number of traces on which the convergence plot is going to be calculated
 
  Once the desired parameters are set, one can start the script with:
     python3 main_sim.py
+ We also implement the Leakage certification of "AES_HD_ext" dataset by using main.py
 
 
 FILES DESCRIPTION
  Lkg_gen.py             - Generates Simulate Leakage Traces
- True_MI_comp.py        - Actual MI computation
+ True_MI_comp.py        - Theoretical MI computation (used for convergence checking of GKOV MI paper)
  GKOV_MI.py             - Nearest Neighbor MI estimators
  Plugin_MI.py           - Plugin MI estimator
  main_sim.py            - MI evaluation for simulated traces            
