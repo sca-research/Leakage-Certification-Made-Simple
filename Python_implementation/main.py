@@ -112,7 +112,7 @@ def run_MI_model(N_prof, N_val, trace_prof, label_prof, trace_val, label_val):
     
     y_predict =clf.predict(X_val)
     t_value = int(np.log(N_val))
-    MI_value = MI_mixt_gao( N_val, t_value, y_predict, y_val)
+    MI_value = MI_gao_multi( N_val, t_value, y_predict, y_val)
     
     return MI_value
     
@@ -145,7 +145,7 @@ def run_MI_MLP(N_prof, N_val, trace_prof, label_prof, trace_val, label_val):
     t_value = int(np.log10(N_val)) ** 3
     
     # t_value = int(np.log(N_val))
-    MI_value = MI_mixt_gao( N_val, t_value, y_predict, y_val)
+    MI_value = MI_gao_multi( N_val, t_value, y_predict, y_val)
     
     return MI_value
 
@@ -227,10 +227,10 @@ def main():
     N_prof_range = np.logspace(3.5, 4.5, 10).astype('int32')
     n_repeats = 1
     PI_mean, TI_mean = [], []
-    # GKOV_MI_mean = []
+    GKOV_MI_mean = []
     for _ in range(n_repeats):
         PIs_lr, TIs_lr = compute_PI_TI(N_prof_range, int(1e04), T_prof[:, idx],
-                                       Y_prof, T_valid[:, idx], Y_valid)
+                                        Y_prof, T_valid[:, idx], Y_valid)
         # gkov_mis = compute_GKOV_MI(N_prof_range, int(5e04), T_prof[:, idx], Y_prof, T_valid[:, idx], Y_valid)
         PI_mean.append(PIs_lr)
         TI_mean.append(TIs_lr)

@@ -250,6 +250,9 @@ def MI_gao_multi(q, t_n, pred_leakage, Tr):
     del dist_
 
     # Distance vector adjustment-------------------------------
+    if len(np.shape(Tr)) == 1:
+        Tr = np.array(Tr).reshape((q, 1))
+    
     cond_dist = np.where(dist == 0, dist, dist - 2e-15)
     tree2 = cKDTree(Tr)
     result_m2 = tree2.query_ball_point(Tr, cond_dist + 1e-15,
